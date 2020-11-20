@@ -222,20 +222,7 @@ var render = function() {
   return _c(
     "v-uni-view",
     { staticClass: _vm._$g(0, "sc"), attrs: { _i: 0 } },
-    [
-      _c(
-        "v-uni-view",
-        { staticClass: _vm._$g(1, "sc"), attrs: { _i: 1 } },
-        [
-          _c(
-            "v-uni-text",
-            { staticClass: _vm._$g(2, "sc"), attrs: { _i: 2 } },
-            [_vm._v(_vm._$g(2, "t0-0") + "666")]
-          )
-        ],
-        1
-      )
-    ],
+    [_c("v-uni-view", { staticClass: _vm._$g(1, "sc"), attrs: { _i: 1 } })],
     1
   )
 }

@@ -90,17 +90,10 @@ var render = function() {
     "view",
     { staticClass: _vm._$s(0, "sc", "content"), attrs: { _i: 0 } },
     [
-      _c(
-        "view",
-        { staticClass: _vm._$s(1, "sc", "text-area"), attrs: { _i: 1 } },
-        [
-          _c(
-            "text",
-            { staticClass: _vm._$s(2, "sc", "title"), attrs: { _i: 2 } },
-            [_vm._v(_vm._$s(2, "t0-0", _vm._s(_vm.title)))]
-          )
-        ]
-      )
+      _c("view", {
+        staticClass: _vm._$s(1, "sc", "text-area"),
+        attrs: { _i: 1 }
+      })
     ]
   )
 }
