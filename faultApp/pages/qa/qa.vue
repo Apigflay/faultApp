@@ -139,7 +139,7 @@ page{
 				width: 72rpx;
 				height: 72rpx;
 				border-radius: 50%;
-				background: red;
+				background: #cecece;
 			}
 			.infoArea{
 				width: 550rpx;
