@@ -9,16 +9,15 @@
 			<input class="account" type="text" value="" placeholder="请输入账号" />
 		</view>
 		<view class="passwordArea">
-			<input class="password" :password="isPassword" type="text" value="" placeholder="请输入账号" />
-			<text class="iconfont icon-yanjing3" v-if="isPassword==false"></text>
-			<text class="iconfont icon-eye" v-if="isPassword==true"></text>
+			<input class="password" :password="isPassword" type="text" value="" placeholder="请输入密码" />
+			<text class="iconfont icon-yanjing3" @click="changePasswordStatus(false)" v-if="isPassword==true"></text>
+			<text class="iconfont icon-eye" @click="changePasswordStatus(true)" v-if="isPassword==false"></text>
 		</view>
-		<view class="loginBtnArea">
+		<view class="loginBtnArea" @click="goLogin">
 			<text class="iconfont icon-iconfontjiantou-copy-copy"></text>
-			
 		</view>
 		<view class="swithLoginArea">
-			<text class="text">用短信验证码登录</text>
+			<text class="text" @click="goPages">用短信验证码登录</text>
 		</view>
 	</view>
 </template>
@@ -27,7 +26,7 @@
 	export default {
 		data() {
 			return {
-				isPassword:false,
+				isPassword:true,
 				title: 'Hello'
 			}
 		},
@@ -35,7 +34,17 @@
 
 		},
 		methods: {
-
+			changePasswordStatus:function(status){
+				this.isPassword=status
+			},
+			goLogin:function(){
+				
+			},
+			goPages:function(){
+				uni.navigateTo({
+				    url: '/pages/loginByPhone/loginByPhone'
+				});
+			}
 		}
 	}
 </script>
@@ -76,6 +85,13 @@ page{
 		margin: auto;
 		background: #f2f3f7;
 		margin-top: 130rpx;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		.account{
+			height: 60rpx;
+			margin-left:40rpx ;
+		}
 	}
 	.passwordArea{//密码
 		width: 586rpx;
@@ -85,6 +101,21 @@ page{
 		background: #f2f3f7;
 		margin-top: 27rpx;
 		margin-bottom: 60rpx;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		.password{
+			height: 60rpx;
+			margin-left:40rpx ;
+		}
+		.iconfont{
+			font-size: 40rpx;
+			width: 80rpx;
+			height: 80rpx;
+			line-height: 80rpx;
+			text-align: center;
+			margin-right:40rpx ;
+		}
 	}
 	.loginBtnArea{
 		height: 150rpx;
