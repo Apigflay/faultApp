@@ -12,8 +12,8 @@
 		<view class="passwordArea">
 			<text class="areaCode">+86</text>
 			<text class="triangle"></text>
-			<input class="password" type="text" value="" placeholder="请输入手机号码" />
-			<image class="closeIcon" src="../../static/images/close.png" mode=""></image>
+			<input class="password" v-model="accountStr" type="number" value="" placeholder="请输入手机号码" />
+			<image @click="clearPhone" class="closeIcon" src="../../static/images/close.png" mode=""></image>
 		</view>
 		<view class="loginBtnArea" @click="goRegCode">
 			获取验证码
@@ -22,11 +22,13 @@
 </template>
 
 <script>
+	// import {Get,Post} from "@/lib/js/GlobalFunction.js";//公共方法
+	import Global_ from '@/lib/js/GlobalObj.js';//全局对象
+	import md5 from '@/lib/md5/md5.js'; //md5加密
 	export default {
 		data() {
 			return {
-
-
+				accountStr:'',//手机号码 即账号
 			}
 		},
 		onLoad() {
@@ -34,10 +36,41 @@
 		},
 		methods: {
 			goRegCode:function(){
-				uni.navigateTo({
-				    url: '/pages/verificationCode/verificationCode'
+				uni.showLoading({
+				    title: '加载中'
 				});
-				
+				uni.request({
+				    url: Global_.urlPoint+'/H5/SendTell.aspx', //仅为示例，并非真实接口地址。
+					method:"GET",
+				    data: {
+						uid:'0',//	是	string	登陆名  传 0
+						ntype:'1',//	是	string	平台编号 1.泰喵 2.越南 3.猫印 4.印尼  获取 传 随便传
+						tells:this.accountStr,//	是	String	手机号码
+						Md5:md5('0'+this.accountStr+Global_.md5key),//	是	string	规则md5(uid+ tells)示例：
+						stype:'0',//	是	string	0,登陆，1，发布故障
+				    },
+				    success: (res) => {
+						uni.hideLoading();
+						console.log(res.data)
+						if(res.data.code==100){
+							uni.navigateTo({//navigateTo redirectTo reLaunch
+							    url: '/pages/verificationCode/verificationCode?phone='+this.accountStr
+							});
+						}else{
+							uni.showToast({
+							    title: '请检查手机号',
+							    duration: 2000,
+								icon:"none"
+							});
+						}  
+				    },
+					fail: (err) => {
+						uni.hideLoading();
+					}
+				});
+			},
+			clearPhone:function(){
+				this.accountStr='';
 			}
 		}
 	}

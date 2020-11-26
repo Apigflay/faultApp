@@ -11,16 +11,19 @@
 		</view>
 		<!-- 手机验证码区域 -->
 		<view class="regCodeArea">
-			<wakary-input type="box"></wakary-input>
+			<wakary-input type="box" @finish="getComponent"></wakary-input>
 		</view>
-		<view class="tipsArea">已发送验证至</view>
+		<view class="tipsArea">已发送验证至{{accountStr}}</view>
 		<view class="loginBtnArea" @click="goRegCode">
-			重新发送
+			重新发送({{initNum}})
 		</view>
 	</view>
 </template>
 
 <script>
+	// import {Get,Post} from "@/lib/js/GlobalFunction.js";//公共方法
+	import Global_ from '@/lib/js/GlobalObj.js';//全局对象
+	import md5 from '@/lib/md5/md5.js'; //md5加密
 	import wakaryInput from '@/components/wakary-input/wakary-input.vue'
 	export default {
 		components: {
@@ -28,20 +31,102 @@
 		},
 		data() {
 			return {
-
-
+				accountStr:'',//
+				initNum:60,//60s重新发送
+				timer:null,//定时器
 			}
 		},
-		onLoad() {
-
+		onLoad(option) {
+			this.accountStr=option.phone;
+			this.reSend()
 		},
 		methods: {
 			goRegCode:function(){
-				uni.navigateTo({
-				    url: '/pages/verificationCode/verificationCode'
+				if(this.initNum==0){
+					uni.request({
+						url: Global_.urlPoint+'/H5/SendTell.aspx', //仅为示例，并非真实接口地址。
+						method:"GET",
+						data: {
+							uid:'0',//	是	string	登陆名  传 0
+							ntype:'1',//	是	string	平台编号 1.泰喵 2.越南 3.猫印 4.印尼  获取 传 随便传
+							tells:this.accountStr,//	是	String	手机号码
+							Md5:md5('0'+this.accountStr+Global_.md5key),//	是	string	规则md5(uid+ tells)示例：
+							stype:'0',//	是	string	0,登陆，1，发布故障
+						},
+						success: (res) => {
+							if(res.data.code==100){
+								uni.showToast({
+									title: '发送成功',
+									duration: 2000,
+									icon:"none"
+								});
+							}else{
+								uni.showToast({
+									title: '发送失败',
+									duration: 2000,
+									icon:"none"
+								});
+							}  
+						},
+						fail: (err) => {
+							// uni.hideLoading();
+						}
+					});
+				}else{
+					uni.showToast({
+						title: '请稍等一会',
+						duration: 2000,
+						icon:"none"
+					});
+				}
+			},
+			reSend:function(){
+				var that = this;
+				this.timer = setInterval(function(){
+					if(that.initNum<=0){
+						that.initNum=0;
+					}else{
+						that.initNum--;
+					}
+				},1000)
+			},
+			getComponent:function(phoneCode){//获取code
+				console.log(phoneCode)
+				uni.showLoading({
+				    title: '加载中'
 				});
-				
+				uni.request({
+				    url: Global_.urlPoint+'/H5/GetLogin.aspx', //仅为示例，并非真实接口地址。
+					method:"GET",
+				    data: {
+						uID:this.accountStr,//	是	string	Ntype1时登陆名，2时手机号
+						Upwd:phoneCode,//	是	string	Ntype1时账户的密码，2时手机验证码
+						ntype:'2',//	是	String	登陆类型1.账户密码登陆 2.手机验证码登陆
+						Md5:md5(this.accountStr+phoneCode+Global_.md5key),//	是	string	规则md5(uid+upwd+key)示例：：
+				    },
+				    success: (res) => {
+						uni.hideLoading();
+						if(res.data.code==100){
+							this.$store.dispatch('SET_allLoginInfo',res.data.msg[0]);
+							uni.reLaunch({//navigateTo redirectTo reLaunch
+							    url: '/pages/qa/qa'
+							});
+						}else{
+							uni.showToast({
+							    title: '验证码错误',
+							    duration: 2000,
+								icon:"none"
+							});
+						}  
+				    },
+					fail: (err) => {
+						uni.hideLoading();
+					}
+				});
 			}
+		},
+		onUnload(){
+			clearInterval(this.timer)
 		}
 	}
 </script>

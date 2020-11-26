@@ -1,11 +1,12 @@
 let tagArry =[];
-// let urlPoint ='http://60.191.222.11:8022';
-let urlPoint ='https://live.mycat1314.com';
+let urlPoint ='http://173.248.234.215:86';
+let md5key='HASn-71AS-K812';
 let urlSocketPoint ='ws://192.168.1.100:17400';
 export default
 {
   tagArry,//tag数组 test
   urlPoint,//url前缀
+  md5key,//key
   urlSocketPoint,//socket前缀
 }
 // // // console.log(this.$store.state.login.userInfo)

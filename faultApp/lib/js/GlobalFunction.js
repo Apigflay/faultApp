@@ -8,7 +8,7 @@ import {webMsg} from '../socket/modules/handle.js'
 export function Get(obj,url){
 	return new Promise((resolve, reject) => {
 		uni.request({
-			url: '/api'+url, //仅为示例，并非真实接口地址。 https://live.mycat1314.com/
+			url: 'http://173.248.234.215:86'+url, //仅为示例，并非真实接口地址。 https://live.mycat1314.com/
 			data: obj,
 			method:'GET',
 			success: (res) => {
@@ -29,7 +29,7 @@ export function Post (obj,url) {
 	return new Promise((resolve, reject) => {
 		uni.request({
 			// url: '/api'+url, //仅为示例，并非真实接口地址。 https://live.mycat1314.com/
-			url: 'http://60.191.222.11:8022/'+url, //仅为示例，并非真实接口地址。 https://live.mycat1314.com/
+			url: 'http://173.248.234.215:86'+url, //仅为示例，并非真实接口地址。 https://live.mycat1314.com/
 			data: obj,
 			method:'POST',
 			success: (res) => {

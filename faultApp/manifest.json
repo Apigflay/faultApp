@@ -79,6 +79,19 @@
         "enable" : false
     },
     "h5" : {
-        "template" : "h5index.html"
+        "template" : "h5index.html",
+		"devServer": {
+			//"port": 8080,
+			"disableHostCheck": true,
+			"proxy": {
+				"/api": {
+					"target": "http://173.248.234.215:86",//http://183.131.205.116:8090 https://douban-api.uieee.com
+					"changeOrigin": true,
+					"secure": false,
+					"pathRewrite":{"^/api":""}
+				}
+				
+			}
+		}
     }
 }

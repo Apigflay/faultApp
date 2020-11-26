@@ -6,10 +6,10 @@
 			<img class="icon" src="static/images/icon.png" alt="">
 		</view>
 		<view class="accountArea">
-			<input class="account" type="text" value="" placeholder="请输入账号" />
+			<input class="account" v-model="accountStr" type="text" value="" placeholder="请输入账号" />
 		</view>
 		<view class="passwordArea">
-			<input class="password" :password="isPassword" type="text" value="" placeholder="请输入密码" />
+			<input class="password" v-model="passwordStr" :password="isPassword" type="text" value="" placeholder="请输入密码" />
 			<text class="iconfont icon-yanjing3" @click="changePasswordStatus(false)" v-if="isPassword==true"></text>
 			<text class="iconfont icon-eye" @click="changePasswordStatus(true)" v-if="isPassword==false"></text>
 		</view>
@@ -23,11 +23,15 @@
 </template>
 
 <script>
+	// import {Get,Post} from "@/lib/js/GlobalFunction.js";//公共方法
+	import Global_ from '@/lib/js/GlobalObj.js';//全局对象
+	import md5 from '@/lib/md5/md5.js'; //md5加密
 	export default {
 		data() {
 			return {
 				isPassword:true,
-				title: 'Hello'
+				accountStr:'',//
+				passwordStr:'',//
 			}
 		},
 		onLoad() {
@@ -38,10 +42,40 @@
 				this.isPassword=status
 			},
 			goLogin:function(){
-				
+				uni.showLoading({
+				    title: '加载中'
+				});
+				uni.request({
+				    url: Global_.urlPoint+'/H5/GetLogin.aspx', //仅为示例，并非真实接口地址。
+					method:"GET",
+				    data: {
+						uID:this.accountStr,//	是	string	Ntype1时登陆名，2时手机号
+						Upwd:this.passwordStr,//	是	string	Ntype1时账户的密码，2时手机验证码
+						ntype:'1',//	是	String	登陆类型1.账户密码登陆 2.手机验证码登陆
+						Md5:md5(this.accountStr+this.passwordStr+Global_.md5key),//	是	string	规则md5(uid+upwd+key)示例：：
+				    },
+				    success: (res) => {
+						uni.hideLoading();
+						if(res.data.code==100){
+							this.$store.dispatch('SET_allLoginInfo',res.data.msg[0]);
+							uni.reLaunch({//navigateTo redirectTo reLaunch
+							    url: '/pages/qa/qa'
+							});
+						}else{
+							uni.showToast({
+							    title: '账号密码错误',
+							    duration: 2000,
+								icon:"none"
+							});
+						}  
+				    },
+					fail: (err) => {
+						uni.hideLoading();
+					}
+				});
 			},
 			goPages:function(){
-				uni.navigateTo({
+				uni.navigateTo({//navigateTo redirectTo reLaunch 规则  登录成功销毁所有页面堆栈 之后 页面堆栈保存
 				    url: '/pages/loginByPhone/loginByPhone'
 				});
 			}

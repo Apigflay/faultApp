@@ -3,19 +3,66 @@
 	<view class="content">
 		<!-- <view class="wifiTipWrap"></view> -->
 		<view class="logoArea">
-			<img class="addIcon" src="static/images/add.png" alt="">
+			<img class="addIcon" @click="goPages(0)" src="static/images/add.png" alt="">
 			<img class="photo" src="static/images/icon.png" alt="">
 		</view>
 		<view class="mainArea">
 			<view class="swichBar">
 				<text class="qBtn">问答</text>
-				<text class="sBtn">统计</text>
+				<text class="sBtn" @click="goPages(1)">统计</text>
 			</view>
 			<!-- per 问答 -->
 			<view class="per">
-				<image class="photo" src="../../static/images/icon.png" mode=""></image>
+				<image class="photo" src="../../static/images/sex.jpg" mode=""></image>
 				<view class="infoArea">
-					33
+					<view class="name">
+						哈哈哈哈哈
+					</view>
+					<view class="sayText">
+						夫卡了时间分厘卡时间奥斯陆冬季法律实践地方十六点就罚款了世界东方
+					</view>
+					<view class="imgArea">
+						<image class="img img1" src="../../static/images/sex.jpg" mode=""></image>
+						<image class="img img2" src="../../static/images/sex.jpg" mode=""></image>
+						<image class="img img3" src="../../static/images/sex.jpg" mode=""></image>
+					</view>
+					<view class="timeArea">
+						<text class="time">23分钟前</text>
+						<view class="more">
+							<image class="moreImg" src="../../static/images/msg.png" mode=""></image>
+						</view>
+					</view>
+					<view class="commentArea">
+						<text class="comName">狂人：</text>
+						云真白数据分类算法上了飞机阿拉斯加方式slid附加赛决定。
+					</view>
+				</view>
+			</view>
+			<!-- per 问答 -->
+			<view class="per">
+				<image class="photo" src="../../static/images/sex.jpg" mode=""></image>
+				<view class="infoArea">
+					<view class="name">
+						哈哈哈哈哈
+					</view>
+					<view class="sayText">
+						夫卡了时间分厘卡时间奥斯陆冬季法律实践地方十六点就罚款了世界东方
+					</view>
+					<view class="imgArea">
+						<image class="img img1" src="../../static/images/sex.jpg" mode=""></image>
+						<image class="img img2" src="../../static/images/sex.jpg" mode=""></image>
+						<image class="img img3" src="../../static/images/sex.jpg" mode=""></image>
+					</view>
+					<view class="timeArea">
+						<text class="time">23分钟前</text>
+						<view class="more">
+							<image class="moreImg" src="../../static/images/msg.png" mode=""></image>
+						</view>
+					</view>
+					<view class="commentArea">
+						<text class="comName">狂人：</text>
+						云真白数据分类算法上了飞机阿拉斯加方式slid附加赛决定。
+					</view>
 				</view>
 			</view>
 		</view>
@@ -41,10 +88,17 @@
 
 		},
 		methods: {
-			goRegCode:function(){
-				uni.navigateTo({
-				    url: '/pages/verificationCode/verificationCode'
-				});
+			goPages:function(pageId){//0 edit 1 statistics
+				if(pageId==0){
+					uni.navigateTo({
+					    url: '/pages/edit/edit'
+					});
+				}else if(pageId==1){
+					uni.navigateTo({
+					    url: '/pages/statistics/statistics'
+					});
+				}
+				
 				
 			}
 		}
@@ -143,8 +197,70 @@ page{
 			}
 			.infoArea{
 				width: 550rpx;
-				background:blue;
 				margin-left: 90rpx;
+				padding-top: 6rpx;
+				.name{
+					width: 100%;
+					height: 32rpx;
+					font-size: 32rpx;
+					font-weight: bold;
+					color: #576996;
+					line-height: 32rpx;
+					margin-bottom: 26rpx;
+					overflow: hidden;
+					text-overflow:ellipsis;
+					white-space: nowrap;
+				}
+				.sayText{//说说内容
+					font-size: 28rpx;
+					color: #000000;
+					line-height: 40rpx;
+				}
+				.imgArea{//说说图片
+					width: 100%;
+					height: 170rpx;
+					margin-top: 20rpx;
+					margin-bottom: 20rpx;
+					display: flex;
+					align-items: center;
+					.img{
+						width: 174rpx;
+						height: 174rpx;
+						margin-right: 8rpx;
+					}
+				}
+				.timeArea{//说说时间
+					display: flex;
+					align-items: center;
+					justify-content: space-between;
+					height: 34rpx;
+					margin-bottom: 15rpx;
+					.time{
+						font-size: 20rpx;
+						font-weight: bold;
+						color: #AFAFAF;
+					}
+					.more{
+						width: 52rpx;
+						height: 33rpx;
+						.moreImg{
+							width: 52rpx;
+							height: 33rpx;
+						}
+					}
+				}
+				.commentArea{
+					line-height: 40rpx;
+					background: #F7F7F7;
+					border-radius: 7rpx;
+					font-size: 24rpx;
+					padding: 10rpx 10rpx;
+					color: #000;
+					.comName{
+						font-weight: bold;
+						color: #576996;
+					}
+				}
 			}
 		}
 	}

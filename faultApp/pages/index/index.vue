@@ -6,12 +6,15 @@
 			<text class="text">FAULT APP</text>
 		</view>
 		<view class="accountArea">
-			
+			<input class="aInput" v-model="accountStr" type="text" value="" />
 		</view>
 		<view class="passwordArea">
-			
+			<input class="pInput" v-model="passwordStr" type="text" value="" />
 		</view>
-		<view class="loginBtnArea">
+		<view class="passwordArea">
+			<input class="pInput" v-model="phoneStr" type="text" value="" />
+		</view>
+		<view class="loginBtnArea" @click="goRegister">
 			<text class="iconfont icon-iconfontjiantou-copy-copy"></text>
 			
 		</view>
@@ -19,17 +22,54 @@
 </template>
 
 <script>
+	import md5 from '@/lib/md5/md5.js';
 	export default {
 		data() {
 			return {
-				title: 'Hello'
+				accountStr:'',
+				passwordStr:'',
+				phoneStr:'',
 			}
 		},
 		onLoad() {
-
+			this.textMd5()
 		},
 		methods: {
-
+			textMd5:function(){
+				// console.log(md5('123'))
+			},
+			goRegister:function(){
+				//yao123456 123456   yao12345678 12345678
+				console.log(this.accountStr)
+				console.log(this.passwordStr)
+				console.log(this.phoneStr)
+				console.log({
+						uID:this.accountStr,//	是	string	登陆名
+						Upwd:this.passwordStr,//	是	string	账户的密码
+						Tells:this.phoneStr,//	是	String	用户电话号码
+						Jobs:'boss',//	否	String	职位
+						ntype:'0',//	是	String	所属平台，0.全部 1.泰喵 2.越南 3.猫印 4.印尼
+						Md5:md5(this.accountStr+this.passwordStr+this.phoneStr+'0'+'HASn-71AS-K812'),//	是	string	规则md5(uid+upwd+tells+ntype+key)示例：
+						key:'HASn-71AS-K812',//	否	string	用于md5加密使用，检验秘钥: HASn-71AS-K812
+				    })
+				uni.request({//http://173.248.234.215:86
+				    url: 'http://173.248.234.215:86'+'/H5/InsertUser.aspx', //仅为示例，并非真实接口地址。
+					method:"GET",
+				    data: {
+						uID:this.accountStr,//	是	string	登陆名
+						Upwd:this.passwordStr,//	是	string	账户的密码
+						Tells:this.phoneStr,//	是	String	用户电话号码
+						Jobs:'boss',//	否	String	职位
+						ntype:'0',//	是	String	所属平台，0.全部 1.泰喵 2.越南 3.猫印 4.印尼
+						Md5:md5(this.accountStr+this.passwordStr+this.phoneStr+'0'+'HASn-71AS-K812'),//	是	string	规则md5(uid+upwd+tells+ntype+key)示例：
+						key:'HASn-71AS-K812',//	否	string	用于md5加密使用，检验秘钥: HASn-71AS-K812
+				    },
+				    success: (res) => {
+				        console.log(res.data);
+				        
+				    }
+				});
+			}
 		}
 	}
 </script>
@@ -77,6 +117,9 @@ page{
 		border-radius: 58rpx;
 		margin: auto;
 		background: #f2f3f7;
+		.aInput{
+			border: 1px solid #000;
+		}
 	}
 	.passwordArea{//密码
 		width: 586rpx;
@@ -86,6 +129,9 @@ page{
 		background: #f2f3f7;
 		margin-top: 27rpx;
 		margin-bottom: 120rpx;
+		.pInput{
+			border: 1px solid #000;
+		}
 	}
 	.loginBtnArea{
 		height: 150rpx;
