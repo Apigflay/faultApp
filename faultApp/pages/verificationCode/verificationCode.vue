@@ -108,6 +108,7 @@
 						uni.hideLoading();
 						if(res.data.code==100){
 							this.$store.dispatch('SET_allLoginInfo',res.data.msg[0]);
+							this.$store.dispatch('SET_allUserInfo',{"account":this.accountStr,"password":phoneCode});
 							uni.reLaunch({//navigateTo redirectTo reLaunch
 							    url: '/pages/qa/qa'
 							});

@@ -12,6 +12,38 @@
 				<text class="sBtn" @click="goPages(1)">统计</text>
 			</view>
 			<!-- per 问答 -->
+			<view class="per" v-for="(item,index) in faultInitMsg">
+				<image class="photo" src="../../static/images/sex.jpg" mode=""></image>
+				<view class="infoArea">
+					<view class="name">
+						{{item.Name}}
+					</view>
+					<view class="sayText">
+						{{item.nContent}}
+					</view>
+					<view class="imgArea" v-if="item.pho!=''&&item.pho1!=''&&item.pho2!=''">
+						<image class="img img1" v-if="item.pho!=''" :src="item.pho" mode=""></image>
+						<image class="img img2" v-if="item.pho1!=''" :src="item.pho1" mode=""></image>
+						<image class="img img3" v-if="item.pho2!=''" :src="item.pho2" mode=""></image>
+					</view>
+					<view class="timeArea">
+						<text class="time">{{item.ntime}}</text>
+						<view class="more">
+							<image class="moreImg" src="../../static/images/msg.png" mode=""></image>
+						</view>
+					</view>
+					<view class="commentArea" v-if="item.Descript!=''">
+						<text class="comName">狂人：</text>
+						云真白数据分类算法上了飞机阿拉斯加方式slid附加赛决定。
+					</view>
+					<view class="imgArea" v-if="item.cpho!=''&&item.cpho1!=''&&item.cpho2!=''">
+						<image class="img img1" v-if="item.cpho!=''" :src="item.cpho" mode=""></image>
+						<image class="img img2" v-if="item.cpho1!=''" :src="item.cpho1" mode=""></image>
+						<image class="img img3" v-if="item.cpho2!=''" :src="item.cpho2" mode=""></image>
+					</view>
+				</view>
+			</view>
+			<!-- per 问答 -->
 			<view class="per">
 				<image class="photo" src="../../static/images/sex.jpg" mode=""></image>
 				<view class="infoArea">
@@ -22,7 +54,7 @@
 						夫卡了时间分厘卡时间奥斯陆冬季法律实践地方十六点就罚款了世界东方
 					</view>
 					<view class="imgArea">
-						<image class="img img1" src="../../static/images/sex.jpg" mode=""></image>
+						<image @click="priviewImg" class="img img1" src="../../static/images/sex.jpg" mode=""></image>
 						<image class="img img2" src="../../static/images/sex.jpg" mode=""></image>
 						<image class="img img3" src="../../static/images/sex.jpg" mode=""></image>
 					</view>
@@ -39,32 +71,6 @@
 				</view>
 			</view>
 			<!-- per 问答 -->
-			<view class="per">
-				<image class="photo" src="../../static/images/sex.jpg" mode=""></image>
-				<view class="infoArea">
-					<view class="name">
-						哈哈哈哈哈
-					</view>
-					<view class="sayText">
-						夫卡了时间分厘卡时间奥斯陆冬季法律实践地方十六点就罚款了世界东方
-					</view>
-					<view class="imgArea">
-						<image class="img img1" src="../../static/images/sex.jpg" mode=""></image>
-						<image class="img img2" src="../../static/images/sex.jpg" mode=""></image>
-						<image class="img img3" src="../../static/images/sex.jpg" mode=""></image>
-					</view>
-					<view class="timeArea">
-						<text class="time">23分钟前</text>
-						<view class="more">
-							<image class="moreImg" src="../../static/images/msg.png" mode=""></image>
-						</view>
-					</view>
-					<view class="commentArea">
-						<text class="comName">狂人：</text>
-						云真白数据分类算法上了飞机阿拉斯加方式slid附加赛决定。
-					</view>
-				</view>
-			</view>
 		</view>
 		
 		
@@ -73,19 +79,22 @@
 </template>
 
 <script>
-	import wakaryInput from '@/components/wakary-input/wakary-input.vue'
+	// import {Get,Post} from "@/lib/js/GlobalFunction.js";//公共方法
+	import Global_ from '@/lib/js/GlobalObj.js';//全局对象
+	import md5 from '@/lib/md5/md5.js'; //md5加密
 	export default {
 		components: {
-			wakaryInput
 		},
 		data() {
 			return {
-
+				faultInitMsg:[],//初始故障信息
 
 			}
 		},
 		onLoad() {
-
+			console.log(this.$store.getters['AllallLoginInfo'])
+			console.log(this.$store.getters['AllallUserInfo'])
+			this.getInitMsg()
 		},
 		methods: {
 			goPages:function(pageId){//0 edit 1 statistics
@@ -100,6 +109,62 @@
 				}
 				
 				
+			},
+			getInitMsg:function(){//获取故障信息
+				uni.showLoading({
+				    title: '获取故障信息中'
+				});
+				var time = (new Date).getTime() - 24 * 60 * 60 * 1000*7;
+				var sevenD = new Date(time); // 获取的是前一天日期
+				var sevenStr=sevenD.getFullYear()+"-"+(sevenD.getMonth()+1)+"-"+sevenD.getDate();
+				console.log(sevenStr)
+				var d = new Date();
+				var nowStr = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
+				console.log(nowStr)
+				uni.request({
+				    url: Global_.urlPoint+'/H5/GetGzSome.aspx', //仅为示例，并非真实接口地址。
+					method:"GET",
+				    data: {
+						uid:this.$store.getters['AllallLoginInfo'].Name,//	是	string	登陆名
+						ntype:this.$store.getters['AllallLoginInfo'].level,//	是	string	平台编号
+						gidx:'0',//	是	string	故障编号   0,查询时间内全部，不为0查询当前故障信息
+						ndate:sevenStr,//	是	String	开始时间，2020-11-11
+						edate:nowStr,//	是	String	结束时间
+						Scorer:'0',//	是	String	是否查询当前用户 默认0，不查 ，1.当前用户提交的故障 2.当前用户回复的故障
+						md5:md5(this.$store.getters['AllallLoginInfo'].Name+this.$store.getters['AllallLoginInfo'].level+'0'+Global_.md5key),//	是	String	规则md5(uidx + ntype + gidx + keys)示例：
+				    },
+				    success: (res) => {
+						uni.hideLoading();
+						console.log(res.data)
+						if(res.data.code==100){
+							this.faultInitMsg=res.data.msg;
+
+						}else{
+							uni.showToast({
+							    title: '获取故障信息失败',
+							    duration: 2000,
+								icon:"none"
+							});
+						}  
+				    },
+					fail: (err) => {
+						uni.hideLoading();
+					}
+				});
+			},
+			priviewImg:function(){
+				uni.previewImage({
+					urls: ['https://dss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1830914723,3154965800&fm=26&gp=0.jpg'],
+					longPressActions: {
+						itemList: ['发送给朋友', '保存图片', '收藏'],
+						success: function(data) {
+							console.log('选中了第' + (data.tapIndex + 1) + '个按钮,第' + (data.index + 1) + '张图片');
+						},
+						fail: function(err) {
+							console.log(err.errMsg);
+						}
+					}
+				});
 			}
 		}
 	}
@@ -184,7 +249,7 @@ page{
 		.per{
 			padding: 27rpx 35rpx;
 			margin-top: 24rpx;
-			min-height: 500rpx;
+			// min-height: 500rpx;
 			background: #fff;
 			border-radius: 20rpx;
 			position: relative;

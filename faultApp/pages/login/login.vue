@@ -35,7 +35,11 @@
 			}
 		},
 		onLoad() {
-
+			// this.$store.dispatch('SET_allLoginInfo',{"Name":"yao123456","Job":"","phone":"15713801628",level:'0'});
+			// this.$store.dispatch('SET_allUserInfo',{"account":"yao123456","password":"123456"});
+			// uni.reLaunch({//navigateTo redirectTo reLaunch
+			//     url: '/pages/qa/qa'
+			// });
 		},
 		methods: {
 			changePasswordStatus:function(status){
@@ -57,7 +61,9 @@
 				    success: (res) => {
 						uni.hideLoading();
 						if(res.data.code==100){
+							console.log(res.data)
 							this.$store.dispatch('SET_allLoginInfo',res.data.msg[0]);
+							this.$store.dispatch('SET_allUserInfo',{"account":this.accountStr,"password":this.passwordStr});
 							uni.reLaunch({//navigateTo redirectTo reLaunch
 							    url: '/pages/qa/qa'
 							});

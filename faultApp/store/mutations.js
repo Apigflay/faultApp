@@ -1,8 +1,10 @@
 
   const mutations ={
-
 	set_allLoginInfo:(state, data) => {
 		state.allLoginInfo = data
+	},
+	set_allUserInfo:(state, data) => {
+		state.allUserInfo = data
 	}
 	
 
