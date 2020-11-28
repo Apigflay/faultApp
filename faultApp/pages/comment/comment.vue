@@ -4,21 +4,11 @@
 			<text class="backBtn" @click="goPages(0)">取消</text>
 			<text class="publishBtn" @click="goPages(1)">发表</text>
 		</view>
-		<view class="pidArea">
-			<radio-group class="list" @change="radioChange">
-				<label class="lable uni-list-cell uni-list-cell-pd" v-for="(item, index) in items" :key="item.value">
-					<view>
-						<radio :value="item.value" :checked="index === current" />
-					</view>
-					<view>{{item.name}}</view>
-				</label>
-			</radio-group>
-		</view>
 		<view class="textArea">
 			 <textarea placeholder="请输入您的问题..." v-model="textStr" confirm-type="完成" maxlength="200" class="textInput"  />
 		</view>
 		<view class="uploadImgArea">
-			<!-- <image v-for="(item,index) in 1" :key="index" class='perImg img' src="../../static/images/sex.jpg" mode=""></image> -->
+			<image v-for="(item,index) in 1" :key="index" class='perImg img' src="../../static/images/sex.jpg" mode=""></image>
 			<image @click="uploadImg" class="addImg img" src="../../static/images/add.png" mode=""></image>
 		</view>
 		{{picData}}
@@ -32,25 +22,22 @@
 	export default {
 		data() {
 			return {
-				loginInfo:null,//
-				userInfo:null,//
-				textStr:'',
+				loginInfo:null,// 当前账户登录信息
+				userInfo:null,// 当前账户
+				textStr:'',//
+				pushUid:'',//发布者登陆名
+				pushGidx:'',//故障id
 				imgData:['','',''],//上传图片  最多3张
 				picData:null,
-				// ---平台id选择---
-				items: [{value: 'USA',name: '泰喵'},
-				        {value: 'CHN',name: '越南',checked: 'true'},
-						{value: 'BRA',name: '猫印'},
-				        {value: 'JPN',name: '印尼'}
-				        ],
-				current: 0
 			};
 		},
-		onLoad() {
+		onLoad(option) {
 			this.loginInfo=this.$store.getters['AllallLoginInfo'];
 			this.userInfo=this.$store.getters['AllallUserInfo'];
 			console.log(this.$store.getters['AllallLoginInfo'])
 			console.log(this.$store.getters['AllallUserInfo'])
+			this.pushUid=option.name;
+			this.pushGidx=option.id;
 		},
 		methods:{
 			goPages:function(pageId){
@@ -58,40 +45,36 @@
 					uni.reLaunch({//navigateTo redirectTo reLaunch
 					    url: '/pages/qa/qa'
 					});
-				}else if(pageId){
+				}else if(pageId==1){
 					this.goRelease()
 				}
-			},
-			radioChange: function(evt) {
-				for (let i = 0; i < this.items.length; i++) {
-					if (this.items[i].value === evt.target.value) {
-						this.current = i;
-						break;
-					}
-				}
-				console.log(this.current)
 			},
 			goRelease:function(){//发布故障
 				uni.showLoading({
 				    title: '发布中'
 				});
 				uni.request({
-				    url: Global_.urlPoint+'/H5/InsertGZSome.aspx', //仅为示例，并非真实接口地址。
+				    url: Global_.urlPoint+'/H5/EditGzSome.aspx', //仅为示例，并非真实接口地址。
 					method:"GET",
 				    data: {
-						uid:this.userInfo.account,//	是	string	登陆名
-						ntype:(this.current+1).toString(),//	是	string	平台id 
-						ncount:this.textStr,//	是	String	提交的故障内容
-						pho:'',//	是	String	故障图片1，图片Url地址 
-						pho1:'',//	是	String	故障图片2，图片Url地址，如没有，可以为””
-						pho2:'',//	是	string	故障图片3，图片Url地址
-						Md5:md5(this.userInfo.account+(this.current+1).toString()+Global_.md5key),//	是	string	规则md5(uid+ ntype +key)示例：：
+						uid:this.pushUid,//	是	string	故障提交者登陆名
+						gidx:this.pushGidx,//	是	string	故障编号
+						ncount:this.textStr,//	是	String	处理的内容
+						cpho:'',//	是	String	图片地址1
+						Cpho1:'',//	是	String	图片地址1
+						Cpho2:'',//	是	String	图片地址1，没有就传””
+						cidx:this.$store.getters['AllallLoginInfo'].Name,//	是	string	处理者登陆名
+						Md5:md5(this.pushUid+this.pushGidx+this.$store.getters['AllallLoginInfo'].Name+Global_.md5key),//	是	string	规则md5(uidx + gidx + cidx +key)示例：D8D69FAE8B23D18B753C18558D09FAB8
+						
 				    },
 				    success: (res) => {
 						uni.hideLoading();
 						if(res.data.code==100){
 							console.log(res.data)
-							this.noticeAll()
+							uni.reLaunch({//navigateTo redirectTo reLaunch
+							    url: '/pages/qa/qa'
+							});
+							// this.noticeAll()
 							
 						}else{
 							uni.showToast({
@@ -119,9 +102,6 @@
 						var tempFiles =res.tempFiles;
 						fileObj.file=tempFiles;
 						console.log(fileObj)
-						// var formData = new FormData();
-						// formData.append('file',res.tempFiles);
-						// console.log(formData)
 						// --------------------upload-----------
 						uni.showLoading({
 						    title: '上传中'
@@ -129,7 +109,7 @@
 						uni.request({
 						    url: Global_.urlPoint+'/H5/PhoTest.aspx', //仅为示例，并非真实接口地址。GetPho.aspx
 							method:"POST",
-						    data: fileObj,//formData fileObj
+						    data: fileObj,
 						    success: (res) => {
 								uni.hideLoading();
 								console.log(res.data)
@@ -155,7 +135,7 @@
 				    }
 				});
 			},
-			noticeAll:function(){//通知
+			noticeAll:function(){//通知  发表评论不通知
 				uni.showLoading({
 				    title: '故障通知中'
 				});
@@ -224,21 +204,6 @@ page{
 			background: linear-gradient(90deg, #2B5BD1, #3868DF);
 			border-radius: 7rpx;
 			margin-right: 32rpx;
-		}
-	}
-	.pidArea{//平台id选择
-		height: 100rpx;
-		display: flex;
-		margin-bottom: 40rpx;
-		.list{
-			width: 100%;
-			height: 100%;
-			display: flex;
-			align-items: center;
-			justify-content: space-around;
-			.lable{
-				display: flex;
-			}
 		}
 	}
 	.textArea{

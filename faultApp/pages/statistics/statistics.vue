@@ -24,7 +24,7 @@
 				<span @click="swichPlatformaId(index)" class="span" v-for="(item,index) in platformaStr" :class="index==platformId?'acSpan':''">{{item}}</span>
 			</view>
 			<view class="reFreashArea">
-				<span class="reFreash" >获取数据</span>
+				<span @click="goReFreash" class="reFreash" >获取数据</span>
 			</view>
 			<!-- 折线图 -->
 			<view class="echartArea qiun-charts">
@@ -48,12 +48,16 @@
 	var canvaLineA=null;
 	export default {
 		data() {
-			const currentDate1 = this.getDate({
-				format: true
-			})
-			const currentDate2 = this.getDate({
-				format: true
-			})
+			// const currentDate1 = this.getDate({
+			// 	format: true
+			// })
+			// const currentDate2 = this.getDate({
+			// 	format: true
+			// })
+			var time1 = (new Date).getTime() - 24 * 60 * 60 * 1000*7;
+			var sevenD1 = new Date(time1); // 获取的是前一天日期
+			var currentDate1=sevenD1.getFullYear()+"-"+(sevenD1.getMonth()+1)+"-"+sevenD1.getDate();
+			var currentDate2 = new Date().getFullYear()+"-"+(new Date().getMonth()+1)+"-"+new Date().getDate();
 			return {
 				cWidth:'',
 				cHeight:'',
@@ -61,8 +65,8 @@
 				
 				date1: currentDate1,
 				date2: currentDate2,
-				platformaStr:['全部','泰喵','越南','猫印','印尼'],
-				platformId:0,//0.全部 1.泰喵 2.越南 3.猫印 4.印尼 初始默认 0
+				platformaStr:['泰喵','越南','猫印','印尼'],
+				platformId:0,//0.全部 1.泰喵 2.越南 3.猫印 4.印尼 初始默认 1  当前没有0
 				
 			}
 		},
@@ -73,7 +77,7 @@
 			this.cWidth=uni.upx2px(710);
 			this.cHeight=uni.upx2px(670);
 			this.getServerData();
-			this.getInitMsg()
+			this.getInitMsg((this.platformId+1).toString(),this.date1,this.date2)
 		},
 		computed: {
 			startDate() {
@@ -90,7 +94,11 @@
 				});
 			},
 			swichPlatformaId:function(id){
+				console.log(id)
 				this.platformId=id;
+			},
+			goReFreash:function(){
+				this.getInitMsg((this.platformId+1).toString(),this.date1,this.date2)
 			},
 			bindDateChange1: function(e) {
 				console.log(e.target.value)
@@ -115,27 +123,20 @@
 				day = day > 9 ? day : '0' + day;
 				return `${year}-${month}-${day}`;
 			},
-			getInitMsg:function(){//获取故障折现数据
+			getInitMsg:function(pId,sTime,eTime){//获取故障折现数据
 				uni.showLoading({
 				    title: '获取故障信息中'
 				});
-				var time = (new Date).getTime() - 24 * 60 * 60 * 1000*7;
-				var sevenD = new Date(time); // 获取的是前一天日期
-				var sevenStr=sevenD.getFullYear()+"-"+(sevenD.getMonth()+1)+"-"+sevenD.getDate();
-				console.log(sevenStr)
-				var d = new Date();
-				var nowStr = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
-				console.log(nowStr)
 				uni.request({
 				    url: Global_.urlPoint+'/H5/GetGzCount.aspx', //仅为示例，并非真实接口地址。
 					method:"GET",
 				    data: {
 						uID:this.$store.getters['AllallLoginInfo'].Name,//	是	string	登陆名
-						ntype:this.$store.getters['AllallLoginInfo'].level,//	是	string	当前平台编号
+						ntype:pId,//	是	string	当前平台编号
 						Stype:'0',//	是	string	查询分类0，当前平台时间内汇总  1.当前用户时间内汇总
-						ndate:sevenStr,//	是	string	开始时间：2020-11-11
-						edate:nowStr,//	是	string	结束时间：2020-11-11
-						Md5:md5(this.$store.getters['AllallLoginInfo'].Name+this.$store.getters['AllallLoginInfo'].level+'0'+Global_.md5key),//	是	string	规则md5(uid+ ntype +stype+key)示例：
+						ndate:sTime,//	是	string	开始时间：2020-11-11
+						edate:eTime,//	是	string	结束时间：2020-11-11
+						Md5:md5(this.$store.getters['AllallLoginInfo'].Name+pId+'0'+Global_.md5key),//	是	string	规则md5(uid+ ntype +stype+key)示例：
 
 				    },
 				    success: (res) => {
@@ -158,20 +159,18 @@
 			},
 			getServerData(){
 				let LineA={
-							categories: ['2012', '2013', '2014', '2015', '2016', '2017'],
-							series: [{
-								name: '成交量A',
-								data: [35, 20, 25, 37, 4, 20],
-								color: '#000000'
-							}, {
-								name: '成交量B',
-								data: [70, 40, 65, 100, 44, 68]
-							}, {
-								name: '成交量C',
-								data: [100, 80, 95, 150, 112, 132]
-							}]
-						};
-_self.showLineA("canvasLineA",LineA);
+						categories: ['2012', '2013', '2014', '2015', '2016', '2017'],
+						series: [{
+							name: '已解决',
+							data: [35, 20, 25, 37, 4, 20],
+							color: 'green'
+						}, {
+							name: '故障数量',
+							data: [70, 40, 65, 100, 44, 68],
+							color:'red'
+						}]
+					};
+				_self.showLineA("canvasLineA",LineA);
 				// uni.request({
 				// 	url: 'https://www.ucharts.cn/data.json',
 				// 	data:{
@@ -218,7 +217,7 @@ _self.showLineA("canvasLineA",LineA);
 						splitNumber:5,
 						min:10,
 						max:180,
-						format:(val)=>{return val.toFixed(0)+'元'}
+						format:(val)=>{return val.toFixed(0)+'个'}
 					},
 					width: _self.cWidth*_self.pixelRatio,
 					height: _self.cHeight*_self.pixelRatio,
@@ -356,7 +355,7 @@ page{
 			justify-content: space-around;
 			padding: 30rpx 0rpx;
 			.reFreash{
-				background:red;
+				background:#007AFF;
 				padding: 10rpx 150rpx;
 				border-radius: 10rpx;
 			}

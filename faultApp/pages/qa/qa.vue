@@ -29,12 +29,12 @@
 					<view class="timeArea">
 						<text class="time">{{item.ntime}}</text>
 						<view class="more">
-							<image class="moreImg" src="../../static/images/msg.png" mode=""></image>
+							<image @click="goCommet(item)" class="moreImg" src="../../static/images/msg.png" mode=""></image>
 						</view>
 					</view>
 					<view class="commentArea" v-if="item.Descript!=''">
-						<text class="comName">狂人：</text>
-						云真白数据分类算法上了飞机阿拉斯加方式slid附加赛决定。
+						<text class="comName">{{item.param}}：</text>
+						{{item.Descript}}
 					</view>
 					<view class="imgArea" v-if="item.cpho!=''&&item.cpho1!=''&&item.cpho2!=''">
 						<image class="img img1" v-if="item.cpho!=''" :src="item.cpho" mode=""></image>
@@ -98,17 +98,21 @@
 		},
 		methods: {
 			goPages:function(pageId){//0 edit 1 statistics
-				if(pageId==0){
-					uni.navigateTo({
+				if(pageId==0){//navigateTo redirectTo reLaunch
+					uni.reLaunch({
 					    url: '/pages/edit/edit'
 					});
 				}else if(pageId==1){
-					uni.navigateTo({
+					uni.reLaunch({
 					    url: '/pages/statistics/statistics'
 					});
 				}
-				
-				
+			},
+			goCommet:function(item){//评论
+				console.log(item)
+				uni.reLaunch({
+				    url: '/pages/comment/comment?name='+item.Name+'&id='+item.ID
+				});
 			},
 			getInitMsg:function(){//获取故障信息
 				uni.showLoading({

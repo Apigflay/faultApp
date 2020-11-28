@@ -84,6 +84,17 @@
 				"navigationStyle":"custom"
 			}
 		}
+        ,{
+            "path" : "pages/comment/comment",//评论编辑
+            "style" :                                                                                    
+            {
+                "app-plus": {
+                                  "titleNView": false
+                },
+                "navigationStyle":"custom"
+            }
+            
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",//导航栏标题颜色及状态栏前景颜色，仅支持 black/white

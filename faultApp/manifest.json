@@ -53,6 +53,27 @@
             "sdkConfigs" : {},
             "splashscreen" : {
                 "androidStyle" : "default"
+            },
+            "icons" : {
+                "android" : {
+                    "hdpi" : "static/images/icon.png",
+                    "xhdpi" : "static/images/icon.png",
+                    "xxhdpi" : "static/images/icon.png",
+                    "xxxhdpi" : "static/images/icon.png"
+                },
+                "ios" : {
+                    "appstore" : "static/images/icon.png",
+                    "iphone" : {
+                        "app@2x" : "static/images/icon.png",
+                        "app@3x" : "static/images/icon.png",
+                        "spotlight@2x" : "static/images/icon.png",
+                        "spotlight@3x" : "static/images/icon.png",
+                        "settings@2x" : "static/images/icon.png",
+                        "settings@3x" : "static/images/icon.png",
+                        "notification@2x" : "static/images/icon.png",
+                        "notification@3x" : "static/images/icon.png"
+                    }
+                }
             }
         }
     },
@@ -80,18 +101,19 @@
     },
     "h5" : {
         "template" : "h5index.html",
-		"devServer": {
-			//"port": 8080,
-			"disableHostCheck": true,
-			"proxy": {
-				"/api": {
-					"target": "http://173.248.234.215:86",//http://183.131.205.116:8090 https://douban-api.uieee.com
-					"changeOrigin": true,
-					"secure": false,
-					"pathRewrite":{"^/api":""}
-				}
-				
-			}
-		}
+        "devServer" : {
+            //"port": 8080,
+            "disableHostCheck" : true,
+            "proxy" : {
+                "/api" : {
+                    "target" : "http://173.248.234.215:86", //http://183.131.205.116:8090 https://douban-api.uieee.com
+                    "changeOrigin" : true,
+                    "secure" : false,
+                    "pathRewrite" : {
+                        "^/api" : ""
+                    }
+                }
+            }
+        }
     }
 }
