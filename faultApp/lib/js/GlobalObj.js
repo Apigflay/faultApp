@@ -1,6 +1,6 @@
 let tagArry =[];
-// let urlPoint ='http://173.248.234.215:86';
-let urlPoint ='/api';
+let urlPoint ='http://173.248.234.215:86';
+// let urlPoint ='/api';
 let md5key='HASn-71AS-K812';
 let urlSocketPoint ='ws://192.168.1.100:17400';
 export default

@@ -29,6 +29,7 @@
 	import {sendData,Get,Post} from "@/lib/js/GlobalFunction.js";//公共方法
 	import Global_ from '@/lib/js/GlobalObj.js';//全局对象
 	import md5 from '@/lib/md5/md5.js'; //md5加密
+	import axios from '@/lib/axios/axios.js'; //请求
 	export default {
 		data() {
 			return {
@@ -107,6 +108,7 @@
 				});
 			},
 			uploadImg:function(){
+				
 				var that = this;
 				uni.chooseImage({
 				    count: 3, //默认9
@@ -115,42 +117,64 @@
 				    success: function (res) {
 						console.log(res)
 						
-						var fileObj={file:null};
-						var tempFiles =res.tempFiles;
-						fileObj.file=tempFiles;
-						console.log(fileObj)
-						// var formData = new FormData();
-						// formData.append('file',res.tempFiles);
-						// console.log(formData)
-						// --------------------upload-----------
-						uni.showLoading({
-						    title: '上传中'
-						});
-						uni.request({
-						    url: Global_.urlPoint+'/H5/PhoTest.aspx', //仅为示例，并非真实接口地址。GetPho.aspx
-							method:"POST",
-						    data: fileObj,//formData fileObj
-						    success: (res) => {
-								uni.hideLoading();
-								console.log(res.data)
-								if(res.data.code==100){
-									console.log(res.data)
-									// this.$store.dispatch('SET_allLoginInfo',res.data.msg[0]);
-									// uni.reLaunch({//navigateTo redirectTo reLaunch
-									//     url: '/pages/qa/qa'
-									// });
-								}else{
-									uni.showToast({
-									    title: '上传失败',
-									    duration: 2000,
-										icon:"none"
-									});
-								}  
-						    },
-							fail: (err) => {
-								uni.hideLoading();
-							}
-						});
+						// var fileObj={file:null};
+						// var tempFiles =res.tempFiles;
+						// fileObj.file=tempFiles;
+						// console.log(fileObj)
+						console.log(res.tempFiles)
+						var formData = new FormData();
+						formData.append('file',res.tempFiles[0]);//res.tempFiles[0]
+						formData.append('file1',res.tempFiles[1]);//res.tempFiles[0]
+						formData.append('file2',res.tempFiles[2]);//res.tempFiles[0]
+						console.log(formData)
+						
+						var xhr = new XMLHttpRequest;
+						xhr.open('POST','http://173.248.234.215:86/H5/GetPho.aspx', false);
+						xhr.send(formData);
+						console.log(xhr.responseText)
+						// var resObj=JSON.parse(xhr.responseText)
+						// console.log(resObj)
+						// --------------
+						// var url =Global_.urlPoint+'/H5/PhoTest.aspx';//PhoTest.aspx  GetPho.aspx
+						// axios.post(url,formData,{headers: {'Content-Type': 'multipart/form-data'}})
+						// .then(function (response) {
+						// 	console.log(response.data)
+							
+						// })
+						// .catch(function (error) {
+						// 	console.log(error);
+						// });
+						// --------------------upload-----------192.168.160.238:3000/api/upload/addPic
+						// uni.showLoading({
+						//     title: '上传中'
+						// });
+						// uni.request({
+						//     url:'http://173.248.234.215:86/H5/PhoTest.aspx' ,//'http://173.248.234.215:86'+'/H5/PhoTest.aspx', //仅为示例，并非真实接口地址。GetPho.aspx  /Global_.urlPoint
+						// 	method:"POST",
+						// 	header:{'Content-Type': 'application/x-www-form-urlencodeds'},//'Content-Type': 'multipart/form-data'  'Content-Type': 'application/x-www-form-urlencodeds'
+						//     data: formData,//formData fileObj
+						//     success: (res) => {
+						// 		uni.hideLoading();
+						// 		console.log(res)
+						// 		if(res.data.code==100){
+						// 			console.log(res.data)
+						// 			// this.$store.dispatch('SET_allLoginInfo',res.data.msg[0]);
+						// 			// uni.reLaunch({//navigateTo redirectTo reLaunch
+						// 			//     url: '/pages/qa/qa'
+						// 			// });
+						// 		}else{
+						// 			uni.showToast({
+						// 			    title: '上传失败',
+						// 			    duration: 2000,
+						// 				icon:"none"
+						// 			});
+						// 		}  
+						//     },
+						// 	fail: (err) => {
+						// 		console.log(err)
+						// 		uni.hideLoading();
+						// 	}
+						// });
 						// --------------------upload-----------
 				    }
 				});

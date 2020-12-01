@@ -76,7 +76,7 @@
 			_self = this;
 			this.cWidth=uni.upx2px(710);
 			this.cHeight=uni.upx2px(670);
-			this.getServerData();
+			// this.getServerData();
 			this.getInitMsg((this.platformId+1).toString(),this.date1,this.date2)
 		},
 		computed: {
@@ -141,9 +141,25 @@
 				    },
 				    success: (res) => {
 						uni.hideLoading();
-						console.log(res)
+						console.log(res.data)
 						if(res.data.code==100){
-							
+							var LineA={
+									categories: ['2012', '2013', '2014', '2015', '2016', '2017'],
+									series: [{
+										name: '已解决',
+										data: [35, 20, 25, 37, 4, 20],
+										color: 'green'
+									}, {
+										name: '故障数量',
+										data: [70, 40, 65, 100, 44, 68],
+										color:'red'
+									}]
+								};
+								// console.log(res.data.Time.split(','))
+									LineA.categories=res.data.Time.split(',');
+									LineA.series[0].data=res.data.CNum.split(',');
+									LineA.series[1].data=res.data.GNum.split(',');
+									_self.showLineA("canvasLineA",LineA);
 						}else{
 							uni.showToast({
 							    title: '获取故障信息失败',
@@ -216,7 +232,7 @@
 						dashLength:8,
 						splitNumber:5,
 						min:10,
-						max:180,
+						max:50,
 						format:(val)=>{return val.toFixed(0)+'个'}
 					},
 					width: _self.cWidth*_self.pixelRatio,

@@ -12,7 +12,7 @@
 				<text class="sBtn" @click="goPages(1)">统计</text>
 			</view>
 			<!-- per 问答 -->
-			<view class="per" v-for="(item,index) in faultInitMsg">
+			<view class="per" v-for="(item,index) in faultInitMsg" :key="index">
 				<image class="photo" src="../../static/images/sex.jpg" mode=""></image>
 				<view class="infoArea">
 					<view class="name">
@@ -27,7 +27,7 @@
 						<image class="img img3" v-if="item.pho2!=''" :src="item.pho2" mode=""></image>
 					</view>
 					<view class="timeArea">
-						<text class="time">{{item.ntime}}</text>
+						<text class="time">{{new Date(item.ntime).getFullYear()}}-{{new Date(item.ntime).getMonth()+1}}-{{new Date(item.ntime).getDate()}} {{new Date(item.ntime).getHours()}}:{{new Date(item.ntime).getMinutes()}}</text>
 						<view class="more">
 							<image @click="goCommet(item)" class="moreImg" src="../../static/images/msg.png" mode=""></image>
 						</view>
@@ -59,7 +59,7 @@
 						<image class="img img3" src="../../static/images/sex.jpg" mode=""></image>
 					</view>
 					<view class="timeArea">
-						<text class="time">23分钟前</text>
+						<text class="time">23分钟前{{new Date()}}</text>
 						<view class="more">
 							<image class="moreImg" src="../../static/images/msg.png" mode=""></image>
 						</view>
