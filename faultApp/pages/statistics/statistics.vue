@@ -21,7 +21,7 @@
 				</picker>
 			</view>
 			<view class="platformArea">
-				<span @click="swichPlatformaId(index)" class="span" v-for="(item,index) in platformaStr" :class="index==platformId?'acSpan':''">{{item}}</span>
+				<span @click="swichPlatformaId(index)" class="span" v-for="(item,index) in platformaStr" :key="index" :class="index==platformId?'acSpan':''">{{item}}</span>
 			</view>
 			<view class="reFreashArea">
 				<span @click="goReFreash" class="reFreash" >获取数据</span>
@@ -56,8 +56,13 @@
 			// })
 			var time1 = (new Date).getTime() - 24 * 60 * 60 * 1000*7;
 			var sevenD1 = new Date(time1); // 获取的是前一天日期
-			var currentDate1=sevenD1.getFullYear()+"-"+(sevenD1.getMonth()+1)+"-"+sevenD1.getDate();
-			var currentDate2 = new Date().getFullYear()+"-"+(new Date().getMonth()+1)+"-"+new Date().getDate();
+			// var currentDate1=sevenD1.getFullYear()+"-"+(sevenD1.getMonth()+1)+"-"+sevenD1.getDate();
+			var currentDate1=sevenD1.getFullYear()+"-"+((sevenD1.getMonth()+1)<10?('0'+(sevenD1.getMonth()+1)):(sevenD1.getMonth()+1))+"-"+(sevenD1.getDate()<10?('0'+sevenD1.getDate()):sevenD1.getDate());
+			
+			// var currentDate2 = new Date().getFullYear()+"-"+(new Date().getMonth()+1)+"-"+new Date().getDate();
+			var currentDate2 = new Date().getFullYear()+"-"+((new Date().getMonth()+1)<10?('0'+(new Date().getMonth()+1)):(new Date().getMonth()+1))+"-"+(new Date().getDate()<10?('0'+new Date().getDate()):new Date().getDate());
+			
+			// ((d.getMonth()+1)<10?('0'+(d.getMonth()+1)):(d.getMonth()+1))+"-"+(d.getDate()<10?('0'+d.getDate()):d.getDate());
 			return {
 				cWidth:'',
 				cHeight:'',

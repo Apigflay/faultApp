@@ -18,10 +18,9 @@
 			 <textarea placeholder="请输入您的问题..." v-model="textStr" confirm-type="完成" maxlength="200" class="textInput"  />
 		</view>
 		<view class="uploadImgArea">
-			<!-- <image v-for="(item,index) in 1" :key="index" class='perImg img' src="../../static/images/sex.jpg" mode=""></image> -->
+			<image v-for="(item,index) in picData" :key="index" class='perImg img' :src="item" mode=""></image>
 			<image @click="uploadImg" class="addImg img" src="../../static/images/add.png" mode=""></image>
 		</view>
-		{{picData}}
 	</view>
 </template>
 
@@ -37,7 +36,7 @@
 				userInfo:null,//
 				textStr:'',
 				imgData:['','',''],//上传图片  最多3张
-				picData:null,
+				picData:[],//回调显示图片
 				// ---平台id选择---
 				items: [{value: 'USA',name: '泰喵'},
 				        {value: 'CHN',name: '越南',checked: 'true'},
@@ -76,6 +75,7 @@
 				uni.showLoading({
 				    title: '发布中'
 				});
+				console.log(this.imgData)
 				uni.request({
 				    url: Global_.urlPoint+'/H5/InsertGZSome.aspx', //仅为示例，并非真实接口地址。
 					method:"GET",
@@ -83,9 +83,9 @@
 						uid:this.userInfo.account,//	是	string	登陆名
 						ntype:(this.current+1).toString(),//	是	string	平台id 
 						ncount:this.textStr,//	是	String	提交的故障内容
-						pho:'',//	是	String	故障图片1，图片Url地址 
-						pho1:'',//	是	String	故障图片2，图片Url地址，如没有，可以为””
-						pho2:'',//	是	string	故障图片3，图片Url地址
+						pho:this.imgData[0],//	是	String	故障图片1，图片Url地址 
+						pho1:this.imgData[1],//	是	String	故障图片2，图片Url地址，如没有，可以为””
+						pho2:this.imgData[2],//	是	string	故障图片3，图片Url地址
 						Md5:md5(this.userInfo.account+(this.current+1).toString()+Global_.md5key),//	是	string	规则md5(uid+ ntype +key)示例：：
 				    },
 				    success: (res) => {
@@ -115,67 +115,62 @@
 				    sizeType: ['original'], //original 原图 compressed 压缩图 可以指定是原图还是压缩图，默认二者都有
 				    sourceType: ['album'], //album 从相册选图，camera 使用相机
 				    success: function (res) {
-						console.log(res)
-						
-						// var fileObj={file:null};
-						// var tempFiles =res.tempFiles;
-						// fileObj.file=tempFiles;
-						// console.log(fileObj)
-						console.log(res.tempFiles)
+						uni.showLoading({
+						    title: '上传中'
+						});
 						var formData = new FormData();
-						formData.append('file',res.tempFiles[0]);//res.tempFiles[0]
-						formData.append('file1',res.tempFiles[1]);//res.tempFiles[0]
-						formData.append('file2',res.tempFiles[2]);//res.tempFiles[0]
+						if(res.tempFilePaths.length==1){
+							formData.append('file',res.tempFiles[0]);
+						}else if(res.tempFilePaths.length==2){
+							formData.append('file',res.tempFiles[0]);
+							formData.append('file1',res.tempFiles[1]);
+						}else if(res.tempFilePaths.length==3){
+							formData.append('file',res.tempFiles[0]);
+							formData.append('file1',res.tempFiles[1]);
+							formData.append('file2',res.tempFiles[2]);
+						}else{
+							formData.append('file',res.tempFiles[0]);
+							formData.append('file1',res.tempFiles[1]);
+							formData.append('file2',res.tempFiles[2]);
+						}
 						console.log(formData)
-						
-						var xhr = new XMLHttpRequest;
-						xhr.open('POST','http://173.248.234.215:86/H5/GetPho.aspx', false);
-						xhr.send(formData);
-						console.log(xhr.responseText)
-						// var resObj=JSON.parse(xhr.responseText)
-						// console.log(resObj)
-						// --------------
-						// var url =Global_.urlPoint+'/H5/PhoTest.aspx';//PhoTest.aspx  GetPho.aspx
-						// axios.post(url,formData,{headers: {'Content-Type': 'multipart/form-data'}})
-						// .then(function (response) {
-						// 	console.log(response.data)
-							
-						// })
-						// .catch(function (error) {
-						// 	console.log(error);
-						// });
-						// --------------------upload-----------192.168.160.238:3000/api/upload/addPic
-						// uni.showLoading({
-						//     title: '上传中'
-						// });
-						// uni.request({
-						//     url:'http://173.248.234.215:86/H5/PhoTest.aspx' ,//'http://173.248.234.215:86'+'/H5/PhoTest.aspx', //仅为示例，并非真实接口地址。GetPho.aspx  /Global_.urlPoint
-						// 	method:"POST",
-						// 	header:{'Content-Type': 'application/x-www-form-urlencodeds'},//'Content-Type': 'multipart/form-data'  'Content-Type': 'application/x-www-form-urlencodeds'
-						//     data: formData,//formData fileObj
-						//     success: (res) => {
-						// 		uni.hideLoading();
-						// 		console.log(res)
-						// 		if(res.data.code==100){
-						// 			console.log(res.data)
-						// 			// this.$store.dispatch('SET_allLoginInfo',res.data.msg[0]);
-						// 			// uni.reLaunch({//navigateTo redirectTo reLaunch
-						// 			//     url: '/pages/qa/qa'
-						// 			// });
-						// 		}else{
-						// 			uni.showToast({
-						// 			    title: '上传失败',
-						// 			    duration: 2000,
-						// 				icon:"none"
-						// 			});
-						// 		}  
-						//     },
-						// 	fail: (err) => {
-						// 		console.log(err)
-						// 		uni.hideLoading();
-						// 	}
-						// });
+						// --------------upload--------
+						var url =Global_.urlPoint+'/H5/GetPho.aspx';// GetPho.aspx
+						axios.post(url,formData,{headers: {'Content-Type': 'multipart/form-data'}})
+						.then(function (response) {
+							uni.hideLoading();
+							if(response.data.code==100){//上传成功  回调显示图片
+								console.log(response.data.msg)
+								console.log(response.data.msg.split(','))
+								that.picData=response.data.msg.split(',');
+								console.log(response.data.msg.split(',').length)
+								if(response.data.msg.split(',').length==1){
+									that.imgData[0]=response.data.msg.split(',')[0];
+								}else if(response.data.msg.split(',').length==2){
+									that.imgData[0]=response.data.msg.split(',')[0];
+									that.imgData[1]=response.data.msg.split(',')[1];
+								}else if(response.data.msg.split(',').length==3){
+									that.imgData[0]=response.data.msg.split(',')[0];
+									that.imgData[1]=response.data.msg.split(',')[1];
+									that.imgData[2]=response.data.msg.split(',')[2];
+								}else{
+									that.imgData[0]=response.data.msg.split(',')[0];
+									that.imgData[1]=response.data.msg.split(',')[1];
+									that.imgData[2]=response.data.msg.split(',')[2];
+								}
+							}
+						})
+						.catch(function (error) {
+							console.log(error);
+							uni.hideLoading();
+							uni.showToast({
+								title: '上传失败',
+								duration: 2000,
+								icon:"none"
+							});
+						});
 						// --------------------upload-----------
+
 				    }
 				});
 			},

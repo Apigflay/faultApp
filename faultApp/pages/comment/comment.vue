@@ -8,10 +8,9 @@
 			 <textarea placeholder="请输入您的问题..." v-model="textStr" confirm-type="完成" maxlength="200" class="textInput"  />
 		</view>
 		<view class="uploadImgArea">
-			<image v-for="(item,index) in 1" :key="index" class='perImg img' src="../../static/images/sex.jpg" mode=""></image>
+			<image v-for="(item,index) in picData" :key="index" class='perImg img' :src="item" mode=""></image>
 			<image @click="uploadImg" class="addImg img" src="../../static/images/add.png" mode=""></image>
 		</view>
-		{{picData}}
 	</view>
 </template>
 
@@ -19,6 +18,7 @@
 	import {sendData,Get,Post} from "@/lib/js/GlobalFunction.js";//公共方法
 	import Global_ from '@/lib/js/GlobalObj.js';//全局对象
 	import md5 from '@/lib/md5/md5.js'; //md5加密
+	import axios from '@/lib/axios/axios.js'; //请求
 	export default {
 		data() {
 			return {
@@ -28,7 +28,7 @@
 				pushUid:'',//发布者登陆名
 				pushGidx:'',//故障id
 				imgData:['','',''],//上传图片  最多3张
-				picData:null,
+				picData:[],//回调显示图片
 			};
 		},
 		onLoad(option) {
@@ -60,9 +60,9 @@
 						uid:this.pushUid,//	是	string	故障提交者登陆名
 						gidx:this.pushGidx,//	是	string	故障编号
 						ncount:this.textStr,//	是	String	处理的内容
-						cpho:'',//	是	String	图片地址1
-						Cpho1:'',//	是	String	图片地址1
-						Cpho2:'',//	是	String	图片地址1，没有就传””
+						cpho:this.imgData[0],//	是	String	图片地址1
+						Cpho1:this.imgData[1],//	是	String	图片地址1
+						Cpho2:this.imgData[2],//	是	String	图片地址1，没有就传””
 						cidx:this.$store.getters['AllallLoginInfo'].Name,//	是	string	处理者登陆名
 						Md5:md5(this.pushUid+this.pushGidx+this.$store.getters['AllallLoginInfo'].Name+Global_.md5key),//	是	string	规则md5(uidx + gidx + cidx +key)示例：D8D69FAE8B23D18B753C18558D09FAB8
 						
@@ -90,48 +90,69 @@
 				});
 			},
 			uploadImg:function(){
+				
 				var that = this;
 				uni.chooseImage({
 				    count: 3, //默认9
 				    sizeType: ['original'], //original 原图 compressed 压缩图 可以指定是原图还是压缩图，默认二者都有
 				    sourceType: ['album'], //album 从相册选图，camera 使用相机
 				    success: function (res) {
-						console.log(res)
-						
-						var fileObj={file:null};
-						var tempFiles =res.tempFiles;
-						fileObj.file=tempFiles;
-						console.log(fileObj)
-						// --------------------upload-----------
 						uni.showLoading({
 						    title: '上传中'
 						});
-						uni.request({
-						    url: Global_.urlPoint+'/H5/PhoTest.aspx', //仅为示例，并非真实接口地址。GetPho.aspx
-							method:"POST",
-						    data: fileObj,
-						    success: (res) => {
-								uni.hideLoading();
-								console.log(res.data)
-								if(res.data.code==100){
-									console.log(res.data)
-									// this.$store.dispatch('SET_allLoginInfo',res.data.msg[0]);
-									// uni.reLaunch({//navigateTo redirectTo reLaunch
-									//     url: '/pages/qa/qa'
-									// });
+						var formData = new FormData();
+						if(res.tempFilePaths.length==1){
+							formData.append('file',res.tempFiles[0]);
+						}else if(res.tempFilePaths.length==2){
+							formData.append('file',res.tempFiles[0]);
+							formData.append('file1',res.tempFiles[1]);
+						}else if(res.tempFilePaths.length==3){
+							formData.append('file',res.tempFiles[0]);
+							formData.append('file1',res.tempFiles[1]);
+							formData.append('file2',res.tempFiles[2]);
+						}else{
+							formData.append('file',res.tempFiles[0]);
+							formData.append('file1',res.tempFiles[1]);
+							formData.append('file2',res.tempFiles[2]);
+						}
+						console.log(formData)
+						// --------------upload--------
+						var url =Global_.urlPoint+'/H5/GetPho.aspx';// GetPho.aspx
+						axios.post(url,formData,{headers: {'Content-Type': 'multipart/form-data'}})
+						.then(function (response) {
+							uni.hideLoading();
+							if(response.data.code==100){//上传成功  回调显示图片
+								console.log(response.data.msg)
+								console.log(response.data.msg.split(','))
+								that.picData=response.data.msg.split(',');
+								console.log(response.data.msg.split(',').length)
+								if(response.data.msg.split(',').length==1){
+									that.imgData[0]=response.data.msg.split(',')[0];
+								}else if(response.data.msg.split(',').length==2){
+									that.imgData[0]=response.data.msg.split(',')[0];
+									that.imgData[1]=response.data.msg.split(',')[1];
+								}else if(response.data.msg.split(',').length==3){
+									that.imgData[0]=response.data.msg.split(',')[0];
+									that.imgData[1]=response.data.msg.split(',')[1];
+									that.imgData[2]=response.data.msg.split(',')[2];
 								}else{
-									uni.showToast({
-									    title: '上传失败',
-									    duration: 2000,
-										icon:"none"
-									});
-								}  
-						    },
-							fail: (err) => {
-								uni.hideLoading();
+									that.imgData[0]=response.data.msg.split(',')[0];
+									that.imgData[1]=response.data.msg.split(',')[1];
+									that.imgData[2]=response.data.msg.split(',')[2];
+								}
 							}
+						})
+						.catch(function (error) {
+							console.log(error);
+							uni.hideLoading();
+							uni.showToast({
+								title: '上传失败',
+								duration: 2000,
+								icon:"none"
+							});
 						});
 						// --------------------upload-----------
+
 				    }
 				});
 			},

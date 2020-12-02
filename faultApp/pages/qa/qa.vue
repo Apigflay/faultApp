@@ -1,5 +1,4 @@
 <template>
-	<!-- 蓝湖地址 https://lanhuapp.com/web/#/item/project/detailDetach?pid=b752da94-c224-4060-a37a-226112e51879&project_id=b752da94-c224-4060-a37a-226112e51879&image_id=038a5835-70c9-49b6-b8ea-efba9d7a092c -->
 	<view class="content">
 		<!-- <view class="wifiTipWrap"></view> -->
 		<view class="logoArea">
@@ -21,10 +20,10 @@
 					<view class="sayText">
 						{{item.nContent}}
 					</view>
-					<view class="imgArea" v-if="item.pho!=''&&item.pho1!=''&&item.pho2!=''">
-						<image class="img img1" v-if="item.pho!=''" :src="item.pho" mode=""></image>
-						<image class="img img2" v-if="item.pho1!=''" :src="item.pho1" mode=""></image>
-						<image class="img img3" v-if="item.pho2!=''" :src="item.pho2" mode=""></image>
+					<view class="imgArea" v-if="item.pho!=''||item.pho1!=''||item.pho2!=''">
+						<image class="img img1" v-if="item.pho!=''" @click="priviewImg(item.pho)" :src="item.pho" mode=""></image>
+						<image class="img img2" v-if="item.pho1!=''" @click="priviewImg(item.pho1)" :src="item.pho1" mode=""></image>
+						<image class="img img3" v-if="item.pho2!=''" @click="priviewImg(item.pho2)" :src="item.pho2" mode=""></image>
 					</view>
 					<view class="timeArea">
 						<text class="time">{{new Date(item.ntime).getFullYear()}}-{{new Date(item.ntime).getMonth()+1}}-{{new Date(item.ntime).getDate()}} {{new Date(item.ntime).getHours()}}:{{new Date(item.ntime).getMinutes()}}</text>
@@ -32,44 +31,19 @@
 							<image @click="goCommet(item)" class="moreImg" src="../../static/images/msg.png" mode=""></image>
 						</view>
 					</view>
-					<view class="commentArea" v-if="item.Descript!=''">
+					<view class="commentArea" v-if="item.param!=''">
 						<text class="comName">{{item.param}}：</text>
 						{{item.Descript}}
 					</view>
-					<view class="imgArea" v-if="item.cpho!=''&&item.cpho1!=''&&item.cpho2!=''">
-						<image class="img img1" v-if="item.cpho!=''" :src="item.cpho" mode=""></image>
-						<image class="img img2" v-if="item.cpho1!=''" :src="item.cpho1" mode=""></image>
-						<image class="img img3" v-if="item.cpho2!=''" :src="item.cpho2" mode=""></image>
+					<view class="imgArea" v-if="item.cpho!=''||item.cpho1!=''||item.cpho2!=''">
+						<image class="img img1" v-if="item.cpho!=''" @click="priviewImg(item.pho)" :src="item.cpho" mode=""></image>
+						<image class="img img2" v-if="item.cpho1!=''" @click="priviewImg(item.pho1)" :src="item.cpho1" mode=""></image>
+						<image class="img img3" v-if="item.cpho2!=''" @click="priviewImg(item.pho2)" :src="item.cpho2" mode=""></image>
 					</view>
 				</view>
 			</view>
 			<!-- per 问答 -->
-			<view class="per">
-				<image class="photo" src="../../static/images/sex.jpg" mode=""></image>
-				<view class="infoArea">
-					<view class="name">
-						哈哈哈哈哈
-					</view>
-					<view class="sayText">
-						夫卡了时间分厘卡时间奥斯陆冬季法律实践地方十六点就罚款了世界东方
-					</view>
-					<view class="imgArea">
-						<image @click="priviewImg" class="img img1" src="../../static/images/sex.jpg" mode=""></image>
-						<image class="img img2" src="../../static/images/sex.jpg" mode=""></image>
-						<image class="img img3" src="../../static/images/sex.jpg" mode=""></image>
-					</view>
-					<view class="timeArea">
-						<text class="time">23分钟前{{new Date()}}</text>
-						<view class="more">
-							<image class="moreImg" src="../../static/images/msg.png" mode=""></image>
-						</view>
-					</view>
-					<view class="commentArea">
-						<text class="comName">狂人：</text>
-						云真白数据分类算法上了飞机阿拉斯加方式slid附加赛决定。
-					</view>
-				</view>
-			</view>
+			
 			<!-- per 问答 -->
 		</view>
 		
@@ -120,10 +94,10 @@
 				});
 				var time = (new Date).getTime() - 24 * 60 * 60 * 1000*7;
 				var sevenD = new Date(time); // 获取的是前一天日期
-				var sevenStr=sevenD.getFullYear()+"-"+(sevenD.getMonth()+1)+"-"+sevenD.getDate();
+				var sevenStr=sevenD.getFullYear()+"-"+((sevenD.getMonth()+1)<10?('0'+(sevenD.getMonth()+1)):(sevenD.getMonth()+1))+"-"+(sevenD.getDate()<10?('0'+sevenD.getDate()):sevenD.getDate());
 				console.log(sevenStr)
 				var d = new Date();
-				var nowStr = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
+				var nowStr = d.getFullYear()+"-"+((d.getMonth()+1)<10?('0'+(d.getMonth()+1)):(d.getMonth()+1))+"-"+(d.getDate()<10?('0'+d.getDate()):d.getDate());
 				console.log(nowStr)
 				uni.request({
 				    url: Global_.urlPoint+'/H5/GetGzSome.aspx', //仅为示例，并非真实接口地址。
@@ -156,9 +130,9 @@
 					}
 				});
 			},
-			priviewImg:function(){
+			priviewImg:function(picSrc){
 				uni.previewImage({
-					urls: ['https://dss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1830914723,3154965800&fm=26&gp=0.jpg'],
+					urls: [picSrc],
 					longPressActions: {
 						itemList: ['发送给朋友', '保存图片', '收藏'],
 						success: function(data) {
