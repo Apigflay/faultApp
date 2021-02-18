@@ -95,6 +95,17 @@
             }
             
         }
+        ,{
+            "path" : "pages/boInput/boInput",//驳回原因输入
+            "style" :                                                                                    
+            {
+                "app-plus": {
+                                  "titleNView": false
+                },
+                "navigationStyle":"custom"
+            }
+            
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",//导航栏标题颜色及状态栏前景颜色，仅支持 black/white

@@ -13,7 +13,8 @@
 		<view class="regCodeArea">
 			<wakary-input type="box" @finish="getComponent"></wakary-input>
 		</view>
-		<view class="tipsArea">已发送验证至{{accountStr}}</view>
+		<view class="tipsArea" v-if="quId==0">已发送验证至+86{{accountStr}}</view>
+		<view class="tipsArea" v-if="quId==1">已发送验证至+{{accountStr}}</view>
 		<view class="loginBtnArea" @click="goRegCode">
 			重新发送({{initNum}})
 		</view>
@@ -31,18 +32,22 @@
 		},
 		data() {
 			return {
-				accountStr:'',//
+				accountStr:'',//手机号
+				quId:'',//区号
 				initNum:60,//60s重新发送
 				timer:null,//定时器
 			}
 		},
 		onLoad(option) {
 			this.accountStr=option.phone;
+			this.quId=option.qu;
 			this.reSend()
 		},
 		methods: {
 			goRegCode:function(){
+				var that = this;
 				if(this.initNum==0){
+					
 					uni.request({
 						url: Global_.urlPoint+'/H5/SendTell.aspx', //仅为示例，并非真实接口地址。
 						method:"GET",
@@ -50,11 +55,13 @@
 							uid:'0',//	是	string	登陆名  传 0
 							ntype:'1',//	是	string	平台编号 1.泰喵 2.越南 3.猫印 4.印尼  获取 传 随便传
 							tells:this.accountStr,//	是	String	手机号码
+							ltype:this.quId,// 0：国内短信 1：国外短信
 							Md5:md5('0'+this.accountStr+Global_.md5key),//	是	string	规则md5(uid+ tells)示例：
 							stype:'0',//	是	string	0,登陆，1，发布故障
 						},
 						success: (res) => {
 							if(res.data.code==100){
+								that.initNum=60;
 								uni.showToast({
 									title: '发送成功',
 									duration: 2000,

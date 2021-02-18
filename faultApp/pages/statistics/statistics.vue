@@ -10,6 +10,7 @@
 			<view class="swichBar">
 				<text class="qBtn" @click="goPaes">问答</text>
 				<text class="sBtn">统计</text>
+				<text @click="goPages(3)" class="iconfont icon-tuichu1"></text>
 			</view>
 			<view class="dateArea">
 				<picker class="picker1" mode="date" :value="date1" :start="startDate" :end="endDate" @change="bindDateChange1">
@@ -20,7 +21,7 @@
 					<view class="uni-input">{{date2}}</view>
 				</picker>
 			</view>
-			<view class="platformArea">
+			<view class="platformArea" v-if="userLoginPwer==0">
 				<span @click="swichPlatformaId(index)" class="span" v-for="(item,index) in platformaStr" :key="index" :class="index==platformId?'acSpan':''">{{item}}</span>
 			</view>
 			<view class="reFreashArea">
@@ -72,17 +73,24 @@
 				date2: currentDate2,
 				platformaStr:['泰喵','越南','猫印','印尼'],
 				platformId:0,//0.全部 1.泰喵 2.越南 3.猫印 4.印尼 初始默认 1  当前没有0
+				loginMsg:{},
+				userMsg:{}, 
+				userLoginPwer:'',//用户权限 0.全部 1.泰喵 2.越南 3.猫印 4.印尼 
 				
 			}
 		},
 		onLoad() {
+			this.loginMsg=this.$store.getters['AllallLoginInfo'];
+			this.userMsg=this.$store.getters['AllallUserInfo'];
+			this.userLoginPwer=this.$store.getters['AllallLoginInfo'].level;
 			console.log(this.$store.getters['AllallLoginInfo'])
 			console.log(this.$store.getters['AllallUserInfo'])
+			
 			_self = this;
 			this.cWidth=uni.upx2px(710);
 			this.cHeight=uni.upx2px(670);
 			// this.getServerData();
-			this.getInitMsg((this.platformId+1).toString(),this.date1,this.date2)
+			this.getInitMsg()
 		},
 		computed: {
 			startDate() {
@@ -98,12 +106,30 @@
 				    url: '/pages/qa/qa'
 				});
 			},
+			goPages:function(pageId){//3
+				if(pageId==3){//navigateTo redirectTo reLaunch
+					uni.showModal({
+					    title: '  ',
+					    content: '确定切换账号',
+					    success: function (res) {
+					        if (res.confirm) {
+					            uni.reLaunch({
+					                url: '/pages/login/login'
+					            });
+					        } else if (res.cancel) {
+					            console.log('用户点击取消');
+					        }
+					    }
+					});
+				}
+			},
 			swichPlatformaId:function(id){
 				console.log(id)
 				this.platformId=id;
+				this.getInitMsg()
 			},
 			goReFreash:function(){
-				this.getInitMsg((this.platformId+1).toString(),this.date1,this.date2)
+				this.getInitMsg()
 			},
 			bindDateChange1: function(e) {
 				console.log(e.target.value)
@@ -128,7 +154,17 @@
 				day = day > 9 ? day : '0' + day;
 				return `${year}-${month}-${day}`;
 			},
-			getInitMsg:function(pId,sTime,eTime){//获取故障折现数据
+			getInitMsg:function(){//获取故障折现数据
+			// (this.platformId+1).toString(),this.date1,this.date2
+				console.log(this.date1)
+				console.log(this.date2)
+				console.log(this.userLoginPwer)
+				if(this.userLoginPwer==0){//全平台
+					var newPlatformId=this.platformId+1;
+				}else{
+					var newPlatformId=this.$store.getters['AllallLoginInfo'].level;
+				}
+				console.log(newPlatformId)
 				uni.showLoading({
 				    title: '获取故障信息中'
 				});
@@ -137,11 +173,11 @@
 					method:"GET",
 				    data: {
 						uID:this.$store.getters['AllallLoginInfo'].Name,//	是	string	登陆名
-						ntype:pId,//	是	string	当前平台编号
+						ntype:newPlatformId,//	是	string	当前平台编号
 						Stype:'0',//	是	string	查询分类0，当前平台时间内汇总  1.当前用户时间内汇总
-						ndate:sTime,//	是	string	开始时间：2020-11-11
-						edate:eTime,//	是	string	结束时间：2020-11-11
-						Md5:md5(this.$store.getters['AllallLoginInfo'].Name+pId+'0'+Global_.md5key),//	是	string	规则md5(uid+ ntype +stype+key)示例：
+						ndate:this.date1,//	是	string	开始时间：2020-11-11
+						edate:this.date2,//	是	string	结束时间：2020-11-11
+						Md5:md5(this.$store.getters['AllallLoginInfo'].Name+newPlatformId+'0'+Global_.md5key),//	是	string	规则md5(uid+ ntype +stype+key)示例：
 
 				    },
 				    success: (res) => {
@@ -161,10 +197,41 @@
 									}]
 								};
 								// console.log(res.data.Time.split(','))
-									LineA.categories=res.data.Time.split(',');
+								var newTimeData=JSON.parse(JSON.stringify(res.data.Time.split(',')))
+								console.log(newTimeData)
+								// var timeData =res.data.Time.split(',');
+								// var timeDataLength = newTimeData.length;
+								// var fourNum=Math.floor(timeDataLength/2);
+								// console.log(timeDataLength,fourNum)
+								// if(timeDataLength>4){
+								// 	timeData.forEach(function(item,index){
+								// 		if(index==0){
+								// 			newTimeData[index]=timeData[0].substring(timeDataLength -3)
+								// 		}else if(index==timeDataLength-1){
+								// 			newTimeData[index]=timeData[timeDataLength-1].substring(timeDataLength -3)
+								// 		}else{
+								// 			newTimeData[index]=''
+								// 		}
+								// 	})
+								// }else{
+								// }
+								//   g 总数  c 处理的 w  未处理的  0 处理  1 总
+									LineA.categories=newTimeData;
 									LineA.series[0].data=res.data.CNum.split(',');
 									LineA.series[1].data=res.data.GNum.split(',');
-									_self.showLineA("canvasLineA",LineA);
+									
+									var maxTotalNum=Math.max(...res.data.GNum.split(','));//最大值
+									var maxNewNum=Math.ceil(maxTotalNum/5)*5;
+									console.log(maxTotalNum,maxNewNum)
+									var maxInitNum=20;
+									if(maxInitNum>=maxNewNum){//20
+										console.log(LineA)
+										_self.showLineA("canvasLineA",LineA,maxInitNum);
+									}else{
+										_self.showLineA("canvasLineA",LineA,maxNewNum);
+									}
+									
+									
 						}else{
 							uni.showToast({
 							    title: '获取故障信息失败',
@@ -209,7 +276,7 @@
 				// 	},
 				// });
 			},
-			showLineA(canvasId,chartData){
+			showLineA(canvasId,chartData,maxYNum){
 				// console.log(_self.cHeight)
 				// console.log(_self.pixelRatio)
 				canvaLineA=new uCharts({
@@ -237,7 +304,7 @@
 						dashLength:8,
 						splitNumber:5,
 						min:10,
-						max:50,
+						max:maxYNum,
 						format:(val)=>{return val.toFixed(0)+'个'}
 					},
 					width: _self.cWidth*_self.pixelRatio,
@@ -316,6 +383,7 @@ page{
 			display: flex;
 			align-items: center;
 			margin-bottom: 32rpx;
+			position: relative;
 			.qBtn{
 				width: 145rpx;
 				height: 63rpx;
@@ -338,6 +406,15 @@ page{
 				text-align: center;
 				line-height: 63rpx;
 				margin-left: 32rpx;
+			}
+			.iconfont{
+				font-size: 50rpx!important;
+				width: 50rpx;
+				height: 50rpx;
+				margin-left: 30rpx;
+				position: absolute;
+				right: 32rpx;
+				top: -12rpx;
 			}
 		}
 		.dateArea{//日期选择

@@ -6,13 +6,20 @@
 			<text class="text">FAULT APP</text>
 		</view>
 		<view class="accountArea">
+			账号
 			<input class="aInput" v-model="accountStr" type="text" value="" />
 		</view>
 		<view class="passwordArea">
+			密码
 			<input class="pInput" v-model="passwordStr" type="text" value="" />
 		</view>
-		<view class="passwordArea">
+		<view class="passwordArea passwordArea2">
+			手机号
 			<input class="pInput" v-model="phoneStr" type="text" value="" />
+		</view>
+		<view class="passwordArea passwordArea3">
+			0.全部 1.泰喵 2.越南 3.猫印 4.印尼
+			<input class="pInput" v-model="pidId" type="text" value="" />
 		</view>
 		<view class="loginBtnArea" @click="goRegister">
 			<text class="iconfont icon-iconfontjiantou-copy-copy"></text>
@@ -29,6 +36,7 @@
 				accountStr:'',
 				passwordStr:'',
 				phoneStr:'',
+				pidId:'',
 			}
 		},
 		onLoad() {
@@ -48,7 +56,7 @@
 						Upwd:this.passwordStr,//	是	string	账户的密码
 						Tells:this.phoneStr,//	是	String	用户电话号码
 						Jobs:'boss',//	否	String	职位
-						ntype:'0',//	是	String	所属平台，0.全部 1.泰喵 2.越南 3.猫印 4.印尼
+						ntype:this.pidId,//	是	String	所属平台，0.全部 1.泰喵 2.越南 3.猫印 4.印尼
 						Md5:md5(this.accountStr+this.passwordStr+this.phoneStr+'0'+'HASn-71AS-K812'),//	是	string	规则md5(uid+upwd+tells+ntype+key)示例：
 						key:'HASn-71AS-K812',//	否	string	用于md5加密使用，检验秘钥: HASn-71AS-K812
 				    })
@@ -60,11 +68,16 @@
 						Upwd:this.passwordStr,//	是	string	账户的密码
 						Tells:this.phoneStr,//	是	String	用户电话号码
 						Jobs:'boss',//	否	String	职位
-						ntype:'0',//	是	String	所属平台，0.全部 1.泰喵 2.越南 3.猫印 4.印尼
-						Md5:md5(this.accountStr+this.passwordStr+this.phoneStr+'0'+'HASn-71AS-K812'),//	是	string	规则md5(uid+upwd+tells+ntype+key)示例：
+						ntype:this.pidId,//	是	String	所属平台，0.全部 1.泰喵 2.越南 3.猫印 4.印尼
+						Md5:md5(this.accountStr+this.passwordStr+this.phoneStr+this.pidId+'HASn-71AS-K812'),//	是	string	规则md5(uid+upwd+tells+ntype+key)示例：
 						key:'HASn-71AS-K812',//	否	string	用于md5加密使用，检验秘钥: HASn-71AS-K812
 				    },
 				    success: (res) => {
+						uni.showToast({
+						    title: res.data.msg,
+						    duration: 2000,
+							icon:"none"
+						});
 				        console.log(res.data);
 				        
 				    }
@@ -128,10 +141,12 @@ page{
 		margin: auto;
 		background: #f2f3f7;
 		margin-top: 27rpx;
-		margin-bottom: 120rpx;
 		.pInput{
 			border: 1px solid #000;
 		}
+	}
+	.passwordArea3{
+		margin-bottom: 60rpx;
 	}
 	.loginBtnArea{
 		height: 150rpx;
