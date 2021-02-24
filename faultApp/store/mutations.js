@@ -5,6 +5,9 @@
 	},
 	set_allUserInfo:(state, data) => {
 		state.allUserInfo = data
+	},
+	set_allIsLogin:(state, data) => {
+		state.allIsLogin = data
 	}
 	
 

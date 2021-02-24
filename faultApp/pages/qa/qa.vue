@@ -323,6 +323,7 @@
 				}
 			},
 			goPages:function(pageId){//0 edit 1 statistics
+				var that = this;
 				if(pageId==0){//navigateTo redirectTo reLaunch
 					uni.reLaunch({
 					    url: '/pages/edit/edit'
@@ -337,6 +338,7 @@
 					    content: '确定切换账号',
 					    success: function (res) {
 					        if (res.confirm) {
+								that.$store.dispatch('SET_allIsLogin',false)
 					            uni.reLaunch({
 					                url: '/pages/login/login'
 					            });

@@ -6,6 +6,10 @@ const getters ={
 	AllallUserInfo(state){
 		// console.log(state)
 		return state.allUserInfo
+	},
+	AllallIsLogin(state){
+		// console.log(state)
+		return state.allIsLogin
 	}
 
 }

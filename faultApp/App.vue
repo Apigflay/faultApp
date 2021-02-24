@@ -2,6 +2,7 @@
 	export default {
 		onLaunch: function() {
 			console.log('App Launch')
+			console.log(this.$store.state)
 			var that = this;
 			uni.getStorage({
 				key: 'storage_state_fault',
@@ -12,12 +13,19 @@
 					});
 				}
 			});
+			var isLogin=this.$store.getters['AllallIsLogin'];
+			if(isLogin){
+				uni.reLaunch({//navigateTo redirectTo reLaunch
+				    url: '/pages/qa/qa'
+				});
+			}
 		},
 		onShow: function() {
 			console.log('App Show')
 		},
 		onHide: function() {
 			console.log('App Hide')
+			
 			uni.setStorage({
 				key: 'storage_state_fault',
 				data: JSON.stringify(this.$store.state),

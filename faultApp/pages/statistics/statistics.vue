@@ -107,12 +107,14 @@
 				});
 			},
 			goPages:function(pageId){//3
+				var that = this;
 				if(pageId==3){//navigateTo redirectTo reLaunch
 					uni.showModal({
 					    title: '  ',
 					    content: '确定切换账号',
 					    success: function (res) {
 					        if (res.confirm) {
+								that.$store.dispatch('SET_allIsLogin',false)
 					            uni.reLaunch({
 					                url: '/pages/login/login'
 					            });

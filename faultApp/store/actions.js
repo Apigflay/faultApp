@@ -6,5 +6,8 @@ const actions ={
 	SET_allUserInfo: ({ commit }, data) => {
 		commit('set_allUserInfo', data)
 	},
+	SET_allIsLogin: ({ commit }, data) => {
+		commit('set_allIsLogin', data)
+	}
 }
 export default actions
