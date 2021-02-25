@@ -3,13 +3,17 @@
 		<!-- <view class="wifiTipWrap"></view> -->
 		<view class="logoArea">
 			<img class="addIcon" @click="goPages(0)" src="static/images/add.png" alt="">
-			<img class="photo" src="static/images/icon.png" alt="">
+			<img class="searchIcon" @click="goPages(4)" src="static/images/search.png" alt="">
+			<text @click="goPages(3)" class="iconfont icon-tuichu1"></text>
+			<img class="photo" :src="loginMsg.upho" alt="">
 		</view>
 		<view class="mainArea">
 			<view class="swichBar">
 				<text class="qBtn">问答</text>
 				<text class="sBtn" @click="goPages(1)">统计</text>
-				<text @click="goPages(3)" class="iconfont icon-tuichu1"></text>
+				<text class="sBtn" @click="goPages(5)">信息</text>
+				<text class="sBtn" @click="goPages(6)">我的</text>
+				
 			</view>
 			<!-- 时间选择 -->
 			<view class="dateArea">
@@ -322,7 +326,7 @@
 					
 				}
 			},
-			goPages:function(pageId){//0 edit 1 statistics
+			goPages:function(pageId){//0 edit 1 statistics  3 退出   4  搜索   5 信息  6 我的
 				var that = this;
 				if(pageId==0){//navigateTo redirectTo reLaunch
 					uni.reLaunch({
@@ -347,9 +351,12 @@
 					        }
 					    }
 					});
-					// uni.reLaunch({
-					//     url: '/pages/login/login'
-					// });
+				}else if(pageId==4){
+					
+				}else if(pageId==5){
+					
+				}else if(pageId==6){
+					
 				}
 			},
 			radioChange: function(evt) {//选择 故障情况
@@ -574,6 +581,24 @@ page{
 			left:37rpx;
 			padding: 10rpx;
 		}
+		.searchIcon{
+			position: absolute;
+			width: 45rpx;
+			height: 45rpx;
+			top: 123rpx;
+			left:162rpx;
+			padding: 10rpx;
+		}
+		.iconfont{
+			font-size: 45rpx!important;
+			width: 45rpx;
+			height: 45rpx;
+			position: absolute;
+			top: 120rpx;
+			left: 306rpx;
+			color: #fff;
+			padding: 10rpx;
+		}
 		.photo{
 			position: absolute;
 			width: 72rpx;
@@ -582,7 +607,7 @@ page{
 			top: 111rpx;
 			right:37rpx;
 			padding: 10rpx;
-			background: #FFCB25;
+			// background: #FFCB25;
 		}
 	}
 	.mainArea{
@@ -621,15 +646,7 @@ page{
 				line-height: 63rpx;
 				margin-left: 32rpx;
 			}
-			.iconfont{
-				font-size: 50rpx!important;
-				width: 50rpx;
-				height: 50rpx;
-				margin-left: 30rpx;
-				position: absolute;
-				right: 32rpx;
-				top: -12rpx;
-			}
+			
 		}
 		.dateArea{//日期选择
 			background:#fff;

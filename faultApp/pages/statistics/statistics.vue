@@ -4,13 +4,15 @@
 		<!-- <view class="wifiTipWrap"></view> -->
 		<view class="logoArea">
 			<!-- <img class="addIcon" src="static/images/add.png" alt=""> -->
-			<img class="photo" src="static/images/icon.png" alt="">
+			<img class="photo" :src="loginMsg.upho" alt="">
 		</view>
 		<view class="mainArea">
 			<view class="swichBar">
 				<text class="qBtn" @click="goPaes">问答</text>
 				<text class="sBtn">统计</text>
-				<text @click="goPages(3)" class="iconfont icon-tuichu1"></text>
+				<text class="mBtn" @click="goPages(5)">信息</text>
+				<text class="mBtn" @click="goPages(6)">我的</text>
+				<!-- <text @click="goPages(3)" class="iconfont icon-tuichu1"></text> -->
 			</view>
 			<view class="dateArea">
 				<picker class="picker1" mode="date" :value="date1" :start="startDate" :end="endDate" @change="bindDateChange1">
@@ -369,7 +371,7 @@ page{
 			top: 111rpx;
 			right:37rpx;
 			padding: 10rpx;
-			background: #FFCB25;
+			// background: #FFCB25;
 		}
 	}
 	.mainArea{
@@ -405,6 +407,18 @@ page{
 				font-size: 32rpx;
 				font-weight: bold;
 				color: #3D6DCF;
+				text-align: center;
+				line-height: 63rpx;
+				margin-left: 32rpx;
+			}
+			.mBtn{
+				width: 145rpx;
+				height: 63rpx;
+				background: #D7E1F3;
+				border-radius: 13rpx;
+				font-size: 32rpx;
+				font-weight: bold;
+				color: #ACACAC;
 				text-align: center;
 				line-height: 63rpx;
 				margin-left: 32rpx;
